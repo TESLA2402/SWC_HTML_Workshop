@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task-2</title>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&family=Open+Sans:wght@800&family=Roboto:wght@500&display=swap"
+        rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <style>
+       
+        #main {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding-top: 50px;
+            padding-right: 30px;
+            padding-bottom: 50px;
+            padding-left: 80px;
+
+
+            @media (min-width: 1024px) {
+                width: 5%;
+            }
+        }
+
+        .movie {
+            padding-left: 4px;
+            padding-right: 4px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-top: 50px;
+            background-color: #ffffff;
+            text-align: left;
+            flex-direction: row;
+            flex-grow: 1;
+            width: 275px;
+            height: 500px;
+            
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+            @media (min-width: 640px) {
+                flex-grow: 0;
+            }
+        }
+
+       
+        .movie-info h3 {
+            color: black;
+            font-weight: bold;
+            font-family: font-roboto;
+            font-size: 17px;
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div
+        class=" w-full sm:h-20 flex flex-col sm:flex-row absolute justify-center sm:justify-between items-center py-4 px-4 md:px-16 shadow-md bg-white">
+        <div class="flex items-center justify-start sm:w-64 sm:border-r-2 border-gray-200">
+            <img src="swc.png">
+            <p class="text text-black text-2xl font-extrabold font-open-sans ml-3">Movies</p>
+        </div>
+
+        <div
+            class="flex items-center justify-start w-4/5 sm:w-64 sm:border-l-2 mt-2 sm:mt-0 border-gray-200 p-2 sm:p-0 rounded-full sm:rounded-none sm:bg-white bg-gray-100 h-full">
+            <img src="search.png">
+            <form id="form">
+                <input id="search" class="ml-3 text-lg focus:outline-none bg-transparent min-w-0" type="text" name=""
+                    id="" placeholder="Quick Search">
+            </form>
+        </div>
+    </div>
+
+    <div class=" flex flex-row ">
+        <div
+            class="w-80 inline-block sm: h-5/6  flex flex-col py-32 justify-start sm:flex-col items-end bg-gray-100 border-2 font-medium">
+            <div>
+                <div class="w-64 flex justify-start open-sans text-xl mr-0 bg-white border-2">
+                    <div class="px-6 py-2">Search results</div>
+                </div>
+                <div class="w-48 flex justify-start open-sans mr-0 text-xl mt-6">
+                    <div class="px-6 py-2">All Teams</div>
+                </div>
+                <div class="w-48 flex justify-start open-sans text-xl mt-6">
+                    <div class="px-6 py-2">Core</div>
+                </div>
+                <div class="w-48 flex justify-start open-sans text-xl mt-6">
+                    <div class="px-6 py-2">Developers</div>
+                </div>
+                <div class="w-48 flex justify-start open-sans text-xl mt-6 ">
+                    <div class="px-6 py-2">Designers</div>
+                </div>
+                <div class="w-48 flex justify-start open-sans text-xl mt-6">
+                    <div class="px-6 py-2">Mentor</div>
+                </div>
+                <div class="mt-36">
+                    <button class="py-4 px-20 font-semibold rounded-lg shadow-md text-white bg-black ">
+                        + Add
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-row justify-center lg:w-4/5  flex-wrap ">
+            
+            <main id="main"></main>
+        </div>
+    </div>
+
+
+
+    <script>
+        const API_KEY = 'api_key=375d864e18e3ad7c39eef9392e902a0a';
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        const API_URL = BASE_URL + '/discover/movie?sort_by=popularity.desc&' + API_KEY;
+        const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+        const searchURL = BASE_URL + '/search/movie?' + API_KEY;
+        const main = document.getElementById('main');
+        const form = document.getElementById('form');
+        const search = document.getElementById('search');
+
+        getMovies(API_URL);
+
+        function getMovies(url) {
+
+            fetch(url).then(res => res.json()).then(data => {
+                console.log(data.results)
+                showMovies(data.results);
+            })
+        }
+
+        function showMovies(data) {
+            main.innerHTML = '';
+
+            data.forEach(movie => {
+                const { title, poster_path,vote_average} = movie;
+                const movieEl = document.createElement('div');
+                movieEl.classList.add('movie');
+                movieEl.innerHTML = `
+                       
+                <img src="${poster_path ? IMG_URL + poster_path : "http://via.placeholder.com/1080x1580"}" alt="${title}">
+
+                
+            <div class="movie-info">
+                <h3>${title} </h3>
+                <h3>Rating : ${vote_average}</h3>
+     
+            </div>`
+                main.appendChild(movieEl);
+            })
+        }
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const searchTerm = search.value;
+
+            if (searchTerm) {
+                getMovies(searchURL + '&query=' + searchTerm)
+            } else {
+                getMovies(API_URL);
+            }
+
+        })
+
+    </script>
+
+</body>
+
+</html>
